@@ -24,14 +24,16 @@ SELECT * FROM   #test_tran
 BEGIN TRY
   BEGIN TRAN 
     DECLARE @a FLOAT = 1 / 0.0 
-    INSERT INTO #test_tran VALUES (1, N'Красный') 
+    INSERT INTO #test_tran
+      VALUES (1, N'Красный') 
 	COMMIT TRAN
 END TRY
 BEGIN CATCH
-    PRINT ERROR_MESSAGE()
+  PRINT ERROR_MESSAGE()
 	ROLLBACK
 END CATCH
 ---------------------------------------- 
-GO 
+GO
 
-SELECT * FROM   #test_tran
+SELECT *
+FROM #test_tran

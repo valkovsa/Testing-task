@@ -33,16 +33,15 @@ values
 -- -- SOLUTION -- --
 
 select payments.customerId,
-	   customers.name,
-	   orders.id as orderId,
-	   orders.summa as orderSum,
-	   payments.payment as customerPaid
+	customers.name,
+	orders.id as orderId,
+	orders.summa as orderSum,
+	payments.payment as customerPaid
 from @payments as payments
-join @customers as customers on customers.id = payments.customerId
-join (
-	select *,
-		   SUM(o.summa) over(Partition by o.customerid ORDER BY o.id) as cumulativeTotal
-	from @orders as o) as orders on orders.customerId = payments.customerId
+	join @customers as customers on customers.id = payments.customerId
+	join (select *,
+			SUM(o.summa) over(Partition by o.customerid ORDER BY o.id) as cumulativeTotal
+		  from @orders as o) as orders on orders.customerId = payments.customerId
 where payments.payment >= orders.cumulativeTotal
 
 

@@ -1,4 +1,4 @@
---Необходимо одним запросом удалить все полные дубликаты из таблицы оставив только по одной записи.
+--РќРµРѕР±С…РѕРґРёРјРѕ РѕРґРЅРёРј Р·Р°РїСЂРѕСЃРѕРј СѓРґР°Р»РёС‚СЊ РІСЃРµ РїРѕР»РЅС‹Рµ РґСѓР±Р»РёРєР°С‚С‹ РёР· С‚Р°Р±Р»РёС†С‹ РѕСЃС‚Р°РІРёРІ С‚РѕР»СЊРєРѕ РїРѕ РѕРґРЅРѕР№ Р·Р°РїРёСЃРё.
 
 IF Object_id('tempdb..#test_table') IS NOT NULL 
   DROP TABLE #test_table 
@@ -11,11 +11,11 @@ CREATE TABLE #test_table
 
 GO 
 
-INSERT INTO #test_table VALUES (1, 'Red') --<-- Полный дулбикат
+INSERT INTO #test_table VALUES (1, 'Red') --<-- РџРѕР»РЅС‹Р№ РґСѓР»Р±РёРєР°С‚
 INSERT INTO #test_table VALUES (2, 'Yellow') 
 INSERT INTO #test_table VALUES (3, 'Green') 
 INSERT INTO #test_table VALUES (1, 'Blue') 
-INSERT INTO #test_table VALUES (1, 'Red') --<-- Полный дулбикат
+INSERT INTO #test_table VALUES (1, 'Red') --<-- РџРѕР»РЅС‹Р№ РґСѓР»Р±РёРєР°С‚
 INSERT INTO #test_table VALUES (4, 'Black') 
 INSERT INTO #test_table VALUES (2, 'Red') 
 GO
@@ -25,17 +25,19 @@ FROM   #test_table
 
 GO
 
--- SOLUTION --
+-- -- SOLUTION -- --
 
-;WITH CTE AS (
-SELECT 
-       NUMBER, 
-       NAME, 
-       ROW_NUMBER() OVER(PARTITION BY NUMBER, NAME ORDER BY NUMBER, NAME) row_num
-FROM #test_table
-)
+;WITH CTE AS
+  (
+    SELECT
+      NUMBER,
+      NAME,
+      ROW_NUMBER() OVER(PARTITION BY NUMBER, NAME ORDER BY NUMBER, NAME) row_num
+    FROM #test_table
+  )
 DELETE FROM CTE WHERE row_num > 1
 
 -- CHECK --
-SELECT * FROM #test_table
+SELECT *
+FROM #test_table
 
